@@ -45,11 +45,11 @@ void twist(char direction, int distance, int &currentDialValue){
 
     // No negative numbers on the dial, so we need to fix that if it occurs
     if(currentDialValue < 0){
-        currentDialValue += 100;
+        while(currentDialValue < 0) currentDialValue += 100;
     }
     // Likewise, can't be higher than 99
     else if(currentDialValue > 99){
-        currentDialValue -= 100;
+        while(currentDialValue > 99) currentDialValue -= 100;
     }
 }
 
@@ -64,7 +64,7 @@ int main(){
         int distance;
     };
 
-    TurnData move = {'N', 0};  // This will be the struct we store each move in before
+    TurnData move = {};  // This will be the struct we store each move in before
                                // pushing it onto a vector
     std::vector<TurnData> steps;  // This is that vector of moves (or "steps")
 
@@ -85,6 +85,11 @@ int main(){
         if(isdigit(line[2])){ // If the distance is 2 character long...
             tempString = line[1];
             distanceString = tempString + line[2];
+            // But what about 3 digits?
+            if(isdigit(line[3])){
+                tempString = distanceString;
+                distanceString = tempString + line[3];
+            }
         }
 
         // Throw the distance into our temporary struct
