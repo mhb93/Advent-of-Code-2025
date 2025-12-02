@@ -4,8 +4,6 @@
 
 
 
-
-
 // We've got a dial. There are numbers on the dial, and the direction we need to turn
     // the dial in.
 // Example: The dial is pointing to 11. The rotation R8 would result in the dial being
@@ -26,9 +24,10 @@
 
 
 // includes
-#include <string>    // For strings
-#include <iostream>  // For printing
-
+#include <string>   // For strings
+#include <iostream> // For printing
+#include <fstream>  // For reading from a file
+#include <vector>   // For creating a vector
 
 // function declarations
 void twist(char direction, int distance, int &currentDialValue);
@@ -46,7 +45,7 @@ void twist(char direction, int distance, int &currentDialValue){
 
     // No negative numbers on the dial, so we need to fix that if it occurs
     if(currentDialValue < 0){
-        currentDialValue = 100 + currentDialValue;
+        currentDialValue += 100;
     }
     // Likewise, can't be higher than 99
     else if(currentDialValue > 99){
@@ -57,10 +56,6 @@ void twist(char direction, int distance, int &currentDialValue){
 
 // main
 int main(){
-    // Gotta get the list of numbers in here somehow. I could hardcode them, but it
-        // would be better practice to be able to take an extrernal list.
-        // Will hardcode for now, polish up later
-
     int password = 0;
 
     // Oh baby it's struct time
@@ -69,29 +64,47 @@ int main(){
         int distance;
     };
 
-    TurnData allMoves[10] = {{'L', 68}, {'L', 30}, {'R', 48}, {'L', 5},
-                             {'R', 60}, {'L', 55}, {'L', 1}, {'L', 99},
-                             {'R', 14}, {'L', 82}};  
-    // The setup of this will probably
-                                                    // change drastically if I have to
-                                                    // read from a list. Oh well!
-                                                    // This is the Santa Experience.
-    
-    int listLength = sizeof(allMoves) / sizeof(allMoves[0]);
-    int currentDialValue = 50;  // Given from the instructions
+    TurnData move = {'N', 0};  // This will be the struct we store each move in before
+                               // pushing it onto a vector
+    std::vector<TurnData> steps;  // This is that vector of moves (or "steps")
 
+    int vectorLength;
+    int currentDialValue = 50;  // Given from the instructions
+    std::string distanceString;
+    std::string tempString;
+
+    // Open the file, read the directions from it
+    std::ifstream file("password.txt");
+    std::string line;
+
+
+    while(getline(file, line)){
+        move.direction = line[0];  // Save the direction we want to move in
+
+        distanceString = line[1];  // Record our distance
+        if(isdigit(line[2])){ // If the distance is 2 character long...
+            tempString = line[1];
+            distanceString = tempString + line[2];
+        }
+
+        // Throw the distance into our temporary struct
+        move.distance = std::stoi(distanceString);
+
+        // Put this temporary struct into our vector
+        steps.push_back(move);
+    }
+    if(file.eof()) file.close();  // Clean up after yourself
 
     // For each item in the list, perform the move
-    for(int index = 0; index < listLength; index++){
+    vectorLength = steps.size();
+    for(int index = 0; index < vectorLength; index++){
         // Twist, but don't shout because this is a secret entrance to the North Pole
-        twist(allMoves[index].direction, allMoves[index].distance, currentDialValue);
-        std::cout << currentDialValue << std::endl;
+        twist(steps[index].direction, steps[index].distance, currentDialValue);
         // If it's a 0, make a note of that by updating the password
         if(currentDialValue == 0) password++;
     }
 
     std::cout << "The password is: " << password << std::endl;
-
     
     return 0;
 }
