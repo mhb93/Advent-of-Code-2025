@@ -1,7 +1,7 @@
 // Advent of Code 2025, Day 1, Puzzle 1
 // Mary Bolling
-// December 1st, 2025
-
+// December 2nd, 2025
+// Last modified December 3rd, 2025
 
 
 // We've got a dial. There are numbers on the dial, and the direction we need to turn
