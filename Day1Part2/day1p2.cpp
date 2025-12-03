@@ -1,4 +1,4 @@
-// Advent of Code 2025, Day 1, Puzzle 1
+// Advent of Code 2025, Day 1, Puzzle 2
 // Mary Bolling
 // December 2nd, 2025
 // Last modified December 3rd, 2025
