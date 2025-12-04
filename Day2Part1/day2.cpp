@@ -37,6 +37,7 @@ int findInvalidNumbers(vector<RangePair> ranges){
     // For each pair in the vector, figure out the invalid numbers in each range
     int vectorLength = ranges.size();
     int numDigits;
+    uint64_t invalidSum = 0;
 
     int64_t rangeS, rangeE, rangeRange;
 
@@ -46,29 +47,54 @@ int findInvalidNumbers(vector<RangePair> ranges){
         rangeE = ranges[index].rangeEnd;
         rangeRange = rangeE - rangeS;
         // cout << index << endl;
-        if(index == 18){
-            cout << rangeS << endl;
-            cout << rangeE << endl;
-        }
+        // if(index == 18){
+        //     cout << rangeS << endl;
+        //     cout << rangeE << endl;
+        // }
         for(int currentNum = ranges[index].rangeStart;
                      currentNum <= ranges[index].rangeEnd;
                                                  currentNum++){
             // ...search each number in the range for an invalid input
-            numDigits = countDigit(currentNum);
-            if(numDigits % 2 == 0){
+            std::string numString = std::to_string(currentNum);
+            // cout << numString << endl;
+            // cout << numString.size() <<"\n" << endl;
+
+            if(numString.size() % 2 == 0){
                 // Odd number won't have a twice-repeated sequence, so
                     // don't look at it
                 // cout << currentNum << endl;
-                std::string numString = std::to_string(currentNum);
+                // Chop the number in half, compare the two strings
+                std::string firstHalf, secondHalf;
+                for(int numStrIndex = 0; numStrIndex < numString.size(); numStrIndex++){
+                    if((numStrIndex < numString.size()/2)) firstHalf+= numString[numStrIndex];
+                    else secondHalf += numString[numStrIndex];
+                }
+                if(firstHalf == secondHalf){
+                    cout << currentNum << endl;
+                    // cout << firstHalf << endl;
+                    // cout << secondHalf << endl;
+                    invalidSum += currentNum;
+                }
+                firstHalf.clear();
+                secondHalf.clear();
+
+                // Temporarily get outta there for a test case
+                // cout << numString << endl;
+                // cout << firstHalf << endl;
+                // cout << secondHalf << endl;
+                // cout << "\n" << endl;
+
+                // return 0;
                 // cout << numString << endl;
             }
         }
         // Search the range of numbers for invalid entries
         // numDigits = countDigits(ranges[1].rangeStart)
+        // cout << numDigits << endl;
     }
 
 
-    return 0;   // DUMMY, YEAH
+    return invalidSum;
 }
 
 // Counts the number of digits in a number
@@ -132,10 +158,10 @@ int main(){
 
     IDs.close();  // Clean up after yourself
 
-    cout << commaCounter << endl;
-    cout << ranges.size() << "\n " << endl;
     // Now, for each range, go through and find the numbers
     sumOfInvalidNumbers = findInvalidNumbers(ranges);
+
+    cout << "Sum: " << sumOfInvalidNumbers << endl;
 
     return 0;
 }
