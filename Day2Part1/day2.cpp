@@ -29,23 +29,21 @@ struct RangePair{
 };
 
 // function declarations
-int findInvalidNumbers(vector<RangePair> ranges);
+uint64_t findInvalidNumbers(vector<RangePair> ranges);
 int countDigit(uint64_t n);
 
 // functions
-int findInvalidNumbers(vector<RangePair> ranges){
+uint64_t findInvalidNumbers(vector<RangePair> ranges){
     // For each pair in the vector, figure out the invalid numbers in each range
     int vectorLength = ranges.size();
-    int numDigits;
     uint64_t invalidSum = 0;
 
-    int64_t rangeS, rangeE, rangeRange;
-
     for(int index = 0; index < vectorLength; index++){
-        // For each entry in the passed vector...s
-        for(int currentNum = ranges[index].rangeStart;
-                     currentNum <= ranges[index].rangeEnd;
-                                                 currentNum++){
+        cout << ranges[index].rangeStart << "\n" << endl;
+        // For each entry in the passed vector...
+        for(uint64_t currentNum = ranges[index].rangeStart;
+                         currentNum <= ranges[index].rangeEnd;
+                                                   currentNum++){
             // ...search each number in the range for an invalid input
             std::string numString = std::to_string(currentNum);
             // Odd number won't have a twice-repeated sequence, so
@@ -54,12 +52,15 @@ int findInvalidNumbers(vector<RangePair> ranges){
                 // Chop the number in half, compare the two strings
                 std::string firstHalf, secondHalf;
                 for(int numStrIndex = 0; numStrIndex < numString.size(); numStrIndex++){
-                    if((numStrIndex < numString.size()/2)) firstHalf+= numString[numStrIndex];
+                    // Grab the first half of the number string
+                    if((numStrIndex < numString.size()/2)) firstHalf += numString[numStrIndex];
+                    // Grab the second half of the number string
                     else secondHalf += numString[numStrIndex];
                 }
-                if(firstHalf == secondHalf){
+                // Compare them
+                if(firstHalf == secondHalf && !(firstHalf.empty())){
+                    // Criteria met! Add the number to the running total
                     invalidSum += currentNum;
-                    return invalidSum;
                 }
                 firstHalf.clear();
                 secondHalf.clear();
@@ -67,18 +68,10 @@ int findInvalidNumbers(vector<RangePair> ranges){
         }
     }
 
+    // Got our answer
     return invalidSum;
 }
 
-// Counts the number of digits in a number
-// This code was taken from https://www.geeksforgeeks.org/dsa/program-count-digits-integer-3-different-methods/
-int countDigit(uint64_t n)
-{
-    // Use logarithm base 10 to count digits
-    // log10(n) gives number of digits minus 1, so add 1
-    // cout << n << endl;
-    return floor(log10(n) + 1);
-}
 
 
 int main(){
@@ -93,14 +86,11 @@ int main(){
     const char DASH  = '-';
     char readCharacter;
 
-    int commaCounter = 0;   // DELETE THIS!
-
     // Obligatory index variable
     int index = 0;
     uint64_t sumOfInvalidNumbers;
 
     // Let's read our data, shall we?
-
     while(!(IDs.eof())){
         readCharacter = IDs.get();
         if(isdigit(readCharacter)){
@@ -115,17 +105,14 @@ int main(){
             rangeValue.clear();  // clear it
             index = 0;
         }
-        else if(readCharacter == ','){
-            // If we find a comma, we've found the end of a range
+        else if(readCharacter == ',' || readCharacter == EOF){
+            // If we find a comma (or the end of our file), we've found the end of a range
             rangeHolder.rangeEnd = stoull(rangeValue);  // int it
-            // cout << "Range end: ";
-            // cout << rangeHolder.rangeEnd << "\n" << endl;
             rangeValue.clear();  // clear it
             index = 0;
 
             // Add the RangePair to your vector
             ranges.push_back(rangeHolder);
-            commaCounter++;
         }
     }
 
@@ -135,8 +122,5 @@ int main(){
     sumOfInvalidNumbers = findInvalidNumbers(ranges);
 
     cout << "Sum: " << sumOfInvalidNumbers << endl;
-
-    // Sums I've tried that are wrong: 18446744072326308717 (too high)
-
     return 0;
 }
